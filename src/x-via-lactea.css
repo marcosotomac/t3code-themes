@@ -1,0 +1,10 @@
+/* Vía Láctea: polvo de estrellas plateado sobre la burbuja y el composer. */
+.dark{
+  --px-dust:radial-gradient(circle,rgb(255 255 255 / 34%) .6px,#0000 1.2px) 0 0/11px 11px,
+            radial-gradient(circle,rgb(255 255 255 / 18%) .6px,#0000 1.2px) 5px 7px/17px 17px;
+  --px-bubble-tex:var(--px-dust);
+  --px-card-tex:var(--px-dust);
+  --px-composer-line:linear-gradient(90deg,#0000,rgb(255 255 255 / 55%) 35%,rgb(var(--px-a) / 60%) 65%,#0000);
+}
+.dark .chat-markdown :is(h1,h2,h3){color:#fff}
+.dark [data-slot=switch][data-checked] [data-slot=switch-thumb]{background:#fff!important;box-shadow:0 0 6px rgb(255 255 255 / 55%)}

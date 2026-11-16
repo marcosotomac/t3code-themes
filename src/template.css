@@ -1,0 +1,227 @@
+/* ${name} — ${tagline}. Tema pixel art para T3 Code.
+   Todo es estático: el fondo se pinta una vez, sin animaciones ni desenfoques.
+   1 Paleta  2 Fondo  3 Capas transparentes  4 Superficies  5 Sidebar  6 Chat
+   7 Carátula  8 Composer  9 Markdown  10 Controles  11 Popovers  12 Hooks  13 Accesibilidad */
+
+/* 1) Paleta ---------------------------------------------------------------- */
+.dark{
+  --px-a:${A};      /* acento */
+  --px-b:${B};      /* pareja del acento en degradados */
+  --px-l:${L};      /* claro: líneas y hovers */
+  --px-h:${Hh};     /* realce: enlaces y código en línea */
+  --px-k:${K};      /* tinta: paneles */
+  --px-d:${D};      /* abismo: velos */
+  --px-s:${S};      /* chispa: cursor y destellos */
+  --px-hair:rgb(var(--px-l) / 8%);
+  --px-veil:rgb(var(--px-d) / 84%);
+  --px-w:max(100vw,calc(100dvh * 16 / 9));   /* cubre la ventana sin recortar el cielo */
+  --px-p:calc(var(--px-w) / 480);
+  --px-grid:linear-gradient(90deg,#000 1px,#0000 1px),linear-gradient(0deg,#000 1px,#0000 1px);
+  --px-art:url(data:image/png;base64,${ART});
+  --px-cut:polygon(0 6px,3px 6px,3px 3px,6px 3px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 3px,calc(100% - 3px) 3px,calc(100% - 3px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 3px) calc(100% - 6px),calc(100% - 3px) calc(100% - 3px),calc(100% - 6px) calc(100% - 3px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 3px),3px calc(100% - 3px),3px calc(100% - 6px),0 calc(100% - 6px));
+  --glass-opacity:100%!important;
+  --accent:rgb(var(--px-a) / 13%)!important;
+  --accent-foreground:#eef3ff!important;
+  --app-scrollbar-thumb:rgb(var(--px-l) / 14%);
+  --app-scrollbar-thumb-hover:rgb(var(--px-l) / 28%);
+}
+.dark,.dark [data-app-sidebar],.dark [data-workspace-area=settings-nav]{
+  --sidebar-row-hover:rgb(var(--px-l) / 7%)!important;
+  --sidebar-row-active:rgb(var(--px-l) / 11%)!important;
+  --sidebar-row-selected:rgb(var(--px-a) / 15%)!important;
+}
+.dark ::selection{background:rgb(var(--px-a) / 34%);color:#fff}
+/* Sin desenfoque en ninguna parte: es lo que más GPU gasta en la app */
+.dark *,.dark ::before,.dark ::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+
+/* 2) Fondo: una sola capa fija detrás de toda la app ---------------------- */
+.dark [data-slot=sidebar-wrapper]{background:rgb(var(--px-d));isolation:isolate}
+.dark [data-slot=sidebar-wrapper]::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-color:rgb(var(--px-d));
+  background-image:var(--px-grid),var(--px-art);
+  background-size:var(--px-p) var(--px-p),var(--px-p) var(--px-p),var(--px-w) auto;
+  background-position:right bottom;
+  background-repeat:repeat,repeat,no-repeat;
+  image-rendering:pixelated;
+}
+
+/* 3) Capas transparentes para que se vea el cielo ------------------------ */
+.dark [data-slot=sidebar-inset],
+.dark [data-slot=sidebar-inset]>div,
+.dark [data-chat-canvas] [data-workspace-area=conversation],
+.dark [data-chat-canvas] [data-timeline-loading],
+.dark [data-chat-canvas] .messages-timeline-scroll,
+.dark [data-chat-canvas] [data-chat-composer-form],
+.dark [data-settings-page-scroll],
+.dark [data-workspace-area=pull-requests] header{background-color:#0000!important;background-image:none!important}
+/* Vacío: cielo completo. Con mensajes: velo para leer cómodo. */
+.dark [data-chat-canvas]{--px-canvas:#0000;--px-empty:1;background:var(--px-canvas)!important}
+.dark [data-chat-canvas]:has(.messages-timeline-scroll){--px-canvas:rgb(var(--px-d) / 72%);--px-empty:0}
+.dark [data-side-chat-pane] [data-chat-canvas]{--px-canvas:#0000}
+
+/* 4) Superficies ---------------------------------------------------------- */
+.dark [data-workspace-area=panel],
+.dark [data-workspace-area=pull-requests]{background:var(--px-veil)!important;border-color:var(--px-hair)!important}
+.dark [data-thread-terminal-drawer]{background:rgb(var(--px-d) / 92%)!important;border-color:var(--px-hair)!important}
+.dark [data-slot=dialog-popup][data-app-modal]{
+  background-color:rgb(var(--px-d))!important;
+  background-image:linear-gradient(var(--px-veil),var(--px-veil)),var(--px-grid),var(--px-art)!important;
+  background-size:100% 100%,var(--px-p) var(--px-p),var(--px-p) var(--px-p),var(--px-w) auto!important;
+  background-position:0 0,right bottom,right bottom,right bottom!important;
+  background-attachment:fixed!important;
+  background-repeat:no-repeat,repeat,repeat,no-repeat!important;
+  border-color:rgb(var(--px-l) / 12%)!important;
+  box-shadow:inset 0 1px 0 rgb(var(--px-a) / 22%),0 30px 80px -24px #000!important;
+  image-rendering:pixelated;
+}
+.dark [data-slot=dialog-popup][data-app-modal]>*{image-rendering:auto}
+/* Tarjeta de detalles: "trozo de cielo", de la familia del composer. Estrellas arriba, tramado abajo. */
+.dark [data-thread-details-card]{
+  background:url("${CARD_STARS}") right 12px top 1px/160px 12px no-repeat,
+             url("${CARD_HORIZON}") 0 0/100% 100% no-repeat,
+             var(--px-card-tex,linear-gradient(#0000,#0000)),
+             rgb(var(--px-k) / 97%)!important;
+  border-color:#0000!important;border-radius:10px!important;
+  box-shadow:inset 0 0 0 1px rgb(var(--px-l) / 9%),inset 0 1px 0 rgb(var(--px-a) / 22%),0 24px 60px -20px #000!important;
+}
+/* Separadores punteados entre secciones */
+.dark [data-thread-details-card] section~section{
+  border-top-color:#0000!important;
+  background:repeating-linear-gradient(90deg,rgb(var(--px-a) / 35%) 0 2px,#0000 2px 6px) top/100% 2px no-repeat;
+}
+
+/* 5) Sidebar -------------------------------------------------------------- */
+.dark [data-slot=sidebar-container]{border-right-color:rgb(var(--px-l) / 6%)!important}
+.dark [data-slot=sidebar-inner]{background:rgb(var(--px-d) / 66%)!important;background-image:none!important}
+.dark [data-workspace-area=settings-nav]{background:rgb(var(--px-d) / 40%)!important;border-color:var(--px-hair)!important}
+.dark [data-thread-item] [aria-current=page],
+.dark [data-workspace-area=settings-nav] [data-slot=sidebar-menu-button][data-active=true]{
+  /* Tramado pixel art: el color se desvanece en escalones de cuadritos, como el cielo */
+  background:url("${DITHER}") 0 0/100% 100% no-repeat!important;
+  border-color:#0000!important;border-radius:4px!important;box-shadow:none!important;
+}
+
+/* 6) Chat ----------------------------------------------------------------- */
+.dark [data-chat-header]{background:rgb(var(--px-d) / 76%)!important;box-shadow:0 1px 0 var(--px-hair)}
+.dark [data-chat-column]:not(:has(.messages-timeline-scroll)) [data-chat-header]{background:#0000!important;box-shadow:none}
+/* Burbuja con esquinas pixeladas. Se pinta en ::before para no recortar la hora que asoma a la izquierda. */
+.dark [data-user-message-bubble]{background:#0000!important;border-color:#0000!important;isolation:isolate}
+.dark [data-user-message-bubble]::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;clip-path:var(--px-cut);
+  background:var(--px-bubble-tex,linear-gradient(#0000,#0000)),
+             linear-gradient(100deg,rgb(var(--px-a) / 24%),rgb(var(--px-b) / 10%)),rgb(var(--px-k) / 88%);
+  box-shadow:inset 0 1px 0 rgb(255 255 255 / 7%),inset 0 -2px 0 rgb(0 0 0 / 25%);
+}
+
+/* 7) Carátula de la pantalla vacía (pixel art con rejilla LED, tamaño nativo) */
+.dark [data-chat-composer-stack]::before{
+  content:"";position:absolute;left:50%;bottom:100%;z-index:-1;pointer-events:none;
+  width:${MW};height:${MH};max-width:92%;margin-bottom:clamp(28px,8vh,88px);transform:translateX(-50%);
+  background:url(${MARK}) center bottom/contain no-repeat;image-rendering:pixelated;
+  opacity:var(--px-empty,0);
+}
+.dark [data-chat-composer-stack]::after{
+  content:"";position:absolute;left:50%;top:0;z-index:-2;pointer-events:none;
+  width:min(64vw,780px);height:min(50vh,460px);transform:translate(-50%,-90%);
+  background:radial-gradient(closest-side,rgb(var(--px-d) / 70%),rgb(var(--px-d) / 35%) 60%,#0000);
+  opacity:var(--px-empty,0);
+}
+
+/* 8) Composer ------------------------------------------------------------- */
+.dark .composer-tiptap{caret-color:rgb(var(--px-s))}
+.dark [data-slot=composer-context-strip]{background:#0000!important;box-shadow:none!important;border:0!important}
+.dark [data-slot=composer-shell]::before{background-image:linear-gradient(100deg,rgb(var(--px-a) / 8%),rgb(var(--px-b) / 3%) 55%,#0000 80%)}
+/* Horizonte estrellado: un trozo del cielo. Tramado que sube desde abajo + estrellas pixel en la esquina. */
+.dark [data-chat-canvas]:has(.messages-timeline-scroll) [data-slot=composer-shell]::before,
+.dark [data-chat-canvas]:not(:has(.messages-timeline-scroll)) [data-slot=composer-host]::before{
+  --px-horizon:url("${HORIZON}");
+  background-image:url("${STARS}"),
+                   var(--px-composer-line,linear-gradient(90deg,#0000,rgb(var(--px-a) / 55%) 30%,rgb(var(--px-a) / 55%) 70%,#0000)),
+                   var(--px-horizon)!important;
+  background-position:right 12px top 6px,top,0 0!important;
+  background-size:120px 40px,100% 1px,100% 100%!important;
+  background-repeat:no-repeat!important;
+  box-shadow:inset 0 0 0 1px rgb(var(--px-l) / 8%),0 18px 50px -28px rgb(var(--px-a) / 40%);
+}
+/* Al escribir, el horizonte se ilumina un poco (cambio puntual, sin animación) */
+.dark [data-chat-composer-form]:focus-within [data-slot=composer-shell]::before,
+.dark [data-chat-composer-form]:focus-within [data-slot=composer-host]::before{
+  --px-horizon:url("${HORIZON_FOCUS}");
+  box-shadow:inset 0 0 0 1px rgb(var(--px-a) / 18%),0 18px 50px -24px rgb(var(--px-a) / 50%);
+}
+.dark [data-chat-canvas]:not(:has(.messages-timeline-scroll)) [data-slot=composer-host]::before{background-color:rgb(var(--px-k) / 92%)!important}
+
+/* 9) Markdown ------------------------------------------------------------- */
+.dark .chat-markdown a{color:rgb(var(--px-h));text-decoration-color:rgb(var(--px-a) / 45%);text-underline-offset:3px}
+.dark .chat-markdown a:hover{text-decoration-color:rgb(var(--px-h))}
+.dark .chat-markdown :not(pre)>code{background:rgb(var(--px-a) / 12%);color:rgb(var(--px-h));border-radius:4px}
+.dark .chat-markdown blockquote{border-left-color:rgb(var(--px-a) / 55%)}
+.dark .chat-markdown hr{border-color:var(--px-hair)}
+.dark .chat-markdown-codeblock{border-color:rgb(var(--px-l) / 10%)!important;box-shadow:inset 0 1px 0 rgb(var(--px-a) / 22%)}
+
+/* 10) Controles ----------------------------------------------------------- */
+.dark [data-slot=switch][data-checked]{
+  background:linear-gradient(90deg,rgb(var(--px-a) / 70%),rgb(var(--px-b) / 45%)),rgb(var(--px-k))!important;
+  box-shadow:inset 0 1px 0 rgb(255 255 255 / 12%)!important;border-color:#0000!important;
+}
+.dark [data-slot=switch-thumb]{background:#f4f7ff!important}
+.dark [data-slot=toggle][aria-pressed=true],
+.dark [data-environment-identification=pill]{
+  background:linear-gradient(90deg,rgb(var(--px-a) / 24%),rgb(var(--px-b) / 8%)),rgb(var(--px-k))!important;
+  color:rgb(var(--px-h));box-shadow:inset 0 1px 0 rgb(255 255 255 / 7%),inset 0 0 0 1px rgb(var(--px-a) / 22%)!important;
+  border-color:#0000!important;
+}
+
+/* 11) Popovers, menús y tooltips (opacos: legibles y sin coste) ---------- */
+.dark [data-slot=popover-popup],
+.dark [data-slot=menu-popup]{
+  background:linear-gradient(180deg,rgb(var(--px-a) / 8%),#0000 42%),rgb(var(--px-k) / 98%)!important;
+  border-color:rgb(var(--px-l) / 12%)!important;
+  box-shadow:inset 0 1px 0 rgb(var(--px-a) / 20%),0 24px 60px -20px #000!important;
+}
+.dark [data-slot=tooltip-popup]{background:rgb(var(--px-k))!important;border-color:rgb(var(--px-l) / 14%)!important;color:#f2f5ff!important}
+.dark [data-slot=scroll-area-thumb]{background:rgb(var(--px-l) / 14%)!important}
+.dark [data-slot=scroll-area-thumb]:hover{background:rgb(var(--px-l) / 28%)!important}
+
+/* 12) Hooks frágiles (clases internas: revisar si T3 cambia) -------------- */
+.dark [data-workspace-area=panel] [class~=bg-background],
+.dark [data-workspace-area=panel] [class~=bg-card]{background-color:#0000!important;background-image:none!important}
+.dark [data-chat-composer-form] button[class~=bg-message-action]:not(:disabled),
+.dark [data-chat-composer-form] button[class~="bg-destructive/90"]{
+  background:var(--px-send,linear-gradient(150deg,rgb(var(--px-a)),rgb(var(--px-b))))!important;
+  color:rgb(var(--px-d))!important;
+  box-shadow:inset 0 1px 0 rgb(255 255 255 / 35%),inset 0 -2px 0 rgb(0 0 0 / 22%),0 6px 18px -8px rgb(var(--px-a) / 80%)!important;
+}
+.dark [data-chat-composer-form] button[class~="bg-destructive/90"]{
+  --px-send:linear-gradient(150deg,#ff8fae,#d9466f);color:#1a0610!important;
+}
+/* Barra de contexto por bloques pixel (usa clases internas de la tarjeta) */
+.dark [data-thread-details-card] span[class~="h-[3px]"]{
+  height:6px!important;border-radius:1px!important;
+  background:repeating-linear-gradient(90deg,rgb(var(--px-a) / 16%) 0 6px,#0000 6px 8px)!important;
+}
+.dark [data-thread-details-card] span[class~="h-[3px]"]>span[style*="width"]{
+  border-radius:0!important;background:repeating-linear-gradient(90deg,rgb(var(--px-s)) 0 6px,#0000 6px 8px)!important;
+}
+.dark [data-thread-details-card] span[class~="h-[3px]"]>span[class~=bg-warning]{background:repeating-linear-gradient(90deg,#ffc96b 0 6px,#0000 6px 8px)!important}
+.dark [data-thread-details-card] span[class~="h-[3px]"]>span[class~=bg-error]{background:repeating-linear-gradient(90deg,#ff7a98 0 6px,#0000 6px 8px)!important}
+.dark [data-thread-details-card] span[class~="h-[3px]"]>span[class~=w-px]{top:-3px!important;height:12px!important;width:2px!important;background:rgb(var(--px-l))!important}
+.dark [data-app-modal] [style*="d) 30%"]{background-color:${BAR1}!important}
+.dark [data-app-modal] [style*="d) 60%"]{background-color:${BAR2}!important}
+.dark [data-app-modal] [style*="d) 72%"]{background-color:${BAR3}!important}
+
+/* Firma propia de este tema ------------------------------------------------ */
+${EXTRA}
+
+/* 13) Accesibilidad ------------------------------------------------------- */
+@media (prefers-reduced-transparency:reduce){
+  .dark [data-slot=sidebar-wrapper]::before,.dark [data-chat-composer-stack]::before{display:none}
+  .dark [data-slot=sidebar-inner]{background:rgb(var(--px-d))!important}
+  .dark [data-chat-canvas]{--px-canvas:rgb(var(--px-d))}
+  .dark [data-slot=dialog-popup][data-app-modal]{background-image:none!important;background-color:rgb(var(--px-k))!important}
+}
+@media (prefers-contrast:more){
+  .dark{--px-hair:rgb(255 255 255 / 22%)}
+  .dark [data-chat-canvas]:has(.messages-timeline-scroll){--px-canvas:rgb(var(--px-d))}
+}

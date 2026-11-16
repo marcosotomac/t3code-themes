@@ -1,0 +1,5 @@
+src/build/
+__pycache__/
+*.pyc
+backgrounds/meta*.json
+.DS_Store

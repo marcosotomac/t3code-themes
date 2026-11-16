@@ -1,0 +1,8 @@
+/* Nebulosa: índigo profundo con una sola estrella dorada (cursor, marca activa, interruptores). */
+.dark{
+  --px-composer-line:linear-gradient(90deg,#0000,rgb(var(--px-a) / 70%) 35%,rgb(var(--px-s) / 70%) 60%,#0000);
+}
+.dark .chat-markdown :is(h1,h2,h3){color:rgb(var(--px-h))}
+.dark .chat-markdown a:hover{text-decoration-color:rgb(var(--px-s))}
+.dark .chat-markdown blockquote{border-left-color:rgb(var(--px-s) / 60%)}
+.dark [data-slot=switch][data-checked] [data-slot=switch-thumb]{background:rgb(var(--px-s))!important}

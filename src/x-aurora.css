@@ -1,0 +1,10 @@
+/* Aurora Azul: degradados cian → azul, como las cortinas del fondo. */
+.dark{
+  --px-composer-line:linear-gradient(90deg,#0000,rgb(var(--px-s) / 85%) 25%,rgb(var(--px-b) / 85%) 75%,#0000);
+  --px-send:linear-gradient(150deg,rgb(var(--px-s)),rgb(var(--px-a)) 45%,rgb(var(--px-b)));
+}
+.dark [data-chat-header]{box-shadow:0 1px 0 rgb(var(--px-a) / 12%)}
+.dark .chat-markdown :is(h1,h2){background:linear-gradient(90deg,rgb(var(--px-s)),rgb(var(--px-b) / 100%) 140%);-webkit-background-clip:text;background-clip:text;color:#0000}
+.dark .chat-markdown h3{color:rgb(var(--px-s))}
+.dark .chat-markdown-codeblock{box-shadow:inset 0 1px 0 rgb(var(--px-s) / 30%)}
+.dark [data-slot=switch][data-checked] [data-slot=switch-thumb]{background:rgb(var(--px-s))!important}
