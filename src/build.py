@@ -3,12 +3,11 @@ import base64, io, json, math, os, sys
 from string import Template
 from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from mark import mark
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ART = os.path.join(HERE, '..', 'backgrounds')
 OUT = os.path.join(HERE, '..', 'themes')
-DBG = os.path.join(HERE, 'build'); os.makedirs(DBG, exist_ok=True)  # CSS legible y carátulas, para revisar
+DBG = os.path.join(HERE, 'build'); os.makedirs(DBG, exist_ok=True)  # CSS legible de cada tema, para revisar
 
 def ok2rgb(L, C, Hh):
     h = math.radians(Hh); a, b = C * math.cos(h), C * math.sin(h)
@@ -60,21 +59,6 @@ def roles(t):
     }
 
 CSS = Template(open(os.path.join(HERE, 'template.css')).read())
-
-def mark_png(t):
-    """Carátula con la rejilla LED horneada: 8 px de imagen por pixel de carátula."""
-    _, w, h, im = mark(t['caption'], t['icon'], t['mk_top'], t['mk_bot'], t['mk_shadow'], t['mk_cap'],
-                       t['mk_icon'], t['mk_core'])
-    U = 6
-    big = im.resize((w * U, h * U), Image.NEAREST)
-    px = big.load()
-    for y in range(h * U):
-        for x in range(w * U):
-            if x % U == 0 or y % U == 0:
-                r, g, b, al = px[x, y]
-                if al: px[x, y] = (int(r * .55), int(g * .55), int(b * .55), al)
-    buf = io.BytesIO(); big.save(buf, 'PNG', optimize=True)
-    return 'data:image/png;base64,' + base64.b64encode(buf.getvalue()).decode(), w * U, h * U, big
 
 from urllib.parse import quote
 def dither(hexcol, op=.2):
@@ -135,14 +119,12 @@ def stars(hexcol):
 
 def build(t):
     art = base64.b64encode(open(os.path.join(ART, t['art'] + '.png'), 'rb').read()).decode()
-    murl, mw, mh, mimg = mark_png(t)
-    mimg.save(os.path.join(DBG, t['id'] + '-mark.png'))
     a, b = t['acc_h'], t['b_h']
     v = dict(
         name=t['name'], tagline=t['tagline'],
         A=trip(t['acc_L'], t['acc_C'], a), B=trip(t['b_L'], t['b_C'], b),
         L=trip(.86, .05, a), Hh=trip(.88, .07, a), K=trip(.14, .04, t['bg_h']), D=trip(.07, .025, t['bg_h']),
-        S=t['spark'], ART=art, MARK=murl, MW=f'{mw}px', MH=f'{mh}px',
+        S=t['spark'], ART=art, WM1=t['wm'][0], WM2=t['wm'][1], WM3=t['wm'][2],
         BAR1=hx(.36, .09, a), BAR2=hx(.58, .14, a), BAR3=hx(.78, .10, a),
         EXTRA=t.get('extra', ''), CARD_STARS=card_stars('#%02x%02x%02x' % tuple(map(int, t['spark'].split()))), CARD_HORIZON=card_horizon(hx(t['acc_L'], t['acc_C'], a)), HORIZON=horizon(hx(t['acc_L'], t['acc_C'], a), .14), HORIZON_FOCUS=horizon(hx(t['acc_L'], t['acc_C'], a), .2), STARS=stars('#%02x%02x%02x' % tuple(map(int, t['spark'].split()))), DITHER=dither(t.get('row_hex') or hx(t['acc_L'], t['acc_C'], a), t.get('row_op', .2)),
     )
@@ -156,24 +138,20 @@ def build(t):
 THEMES = [
  dict(id='medianoche', name='Medianoche', art='cielo-plano', tagline='cielo plano, luna de hielo',
       bg_h=262, acc_h=252, acc_L=.78, acc_C=.10, act_h=258, b_h=270, b_L=.62, b_C=.12, spark='238 244 255',
-      caption='MEDIANOCHE', icon='moon', mk_top='#f2f6ff', mk_bot='#7fa6f0', mk_shadow='#0a1430',
-      mk_cap='#5b74b8', mk_icon='#e9eedd', mk_core='#e9eedd',
+      wm=('#f2f6ff', '#7fa6f0', '#4a68c0'),
       extra=open(os.path.join(HERE, 'x-medianoche.css')).read()),
  dict(id='via-lactea', name='Vía Láctea', art='cielo-via-lactea', tagline='polvo de estrellas plateado',
       bg_h=268, acc_h=278, acc_L=.80, acc_C=.085, act_h=276, b_h=255, b_L=.70, b_C=.08, spark='255 255 255',
-      caption='VIA LACTEA', icon='spark', mk_top='#ffffff', mk_bot='#a6b0f0', mk_shadow='#0c1033',
-      mk_cap='#6a72b8', mk_icon='#c9d2ff', mk_core='#ffffff',
+      wm=('#ffffff', '#a6b0f0', '#6a72c8'),
       extra=open(os.path.join(HERE, 'x-via-lactea.css')).read()),
  dict(id='aurora-azul', name='Aurora Azul', art='cielo-aurora', tagline='cortinas de luz cian',
       bg_h=255, acc_h=212, acc_L=.80, acc_C=.115, act_h=238, b_h=258, b_L=.62, b_C=.17, spark='159 236 255',
-      caption='AURORA', icon='star4', mk_top='#c8f6ff', mk_bot='#3f7fe8', mk_shadow='#041230',
-      mk_cap='#3b7fb8', mk_icon='#7fe0ff', mk_core='#ffffff',
+      wm=('#d4f8ff', '#52d1e9', '#3f7fe8'),
       extra=open(os.path.join(HERE, 'x-aurora.css')).read()),
  dict(id='nebulosa', name='Nebulosa', art='cielo-nebulosa', tagline='índigo con una estrella dorada',
       bg_h=272, acc_h=284, acc_L=.73, acc_C=.13, act_h=282, b_h=262, b_L=.55, b_C=.14, spark='255 212 128',
       spark_h=82, cursor=o(.85, .12, 82),
-      caption='NEBULOSA', icon='spark', mk_top='#e8e0ff', mk_bot='#7d6cf0', mk_shadow='#0d0a30',
-      mk_cap='#6a5fb8', mk_icon='#ffd480', mk_core='#fff6dc',
+      wm=('#ece6ff', '#8c7cf0', '#5a4ac8'),
       extra=open(os.path.join(HERE, 'x-nebulosa.css')).read()),
 ]
 

@@ -8,7 +8,7 @@ Cuatro temas oscuros para T3 Code, cada uno con su propio cielo estrellado en pi
 
 | Tema | Cielo | Acento | Detalle propio |
 |---|---|---|---|
-| **Medianoche** | cielo plano | azul hielo | Luna creciente en la carátula; el más minimalista |
+| **Medianoche** | cielo plano | azul hielo | Títulos casi blancos e interruptor color luna; el más minimalista |
 | **Vía Láctea** | banda galáctica tenue | plata y lavanda | Polvo de estrellas en la burbuja y la tarjeta de detalles |
 | **Aurora Azul** | aurora boreal | cian → azul | Degradados como las cortinas de la aurora |
 | **Nebulosa** | nebulosa en la esquina | índigo + dorado | Una sola "estrella" dorada: cursor, estrellas e interruptores |
@@ -24,7 +24,7 @@ Para volver al tema original, elige **T3 Chat**.
 ## Qué cambia
 
 - **Fondo**: el cielo cubre toda la ventana, con una rejilla tipo LED sobre cada píxel. Cuando hay mensajes, un velo oscuro lo atenúa para leer cómodo.
-- **Pantalla vacía**: una carátula en pixel art con "T3", un icono propio de cada tema y su nombre.
+- **Pantalla vacía**: un "T3" grande como marca de agua detrás del título, con degradado y una rejilla LED alineada con los píxeles del cielo.
 - **Sidebar**: el hilo activo se marca con un tramado (*dither*) que se desvanece en escalones de cuadritos, igual que el cielo.
 - **Composer**: un "horizonte estrellado", con un tramado que sube desde abajo y estrellas pixel en la esquina. Se ilumina un poco al escribir.
 - **Tarjeta de detalles**: un trozo de cielo con separadores punteados y la barra de contexto por bloques, que pasa a ámbar y luego a rojo cuando el contexto se llena.
@@ -67,7 +67,7 @@ python src/build.py      # regenera themes/*.json
 
 - `src/template.css`: el CSS común, con comentarios por secciones.
 - `src/x-*.css`: la firma propia de cada tema.
-- `src/build.py`: la paleta de cada tema (colores en OKLCH), la carátula y el ensamblado del JSON.
-- `src/build/`: CSS legible y carátulas de cada tema, para revisar (no se versiona).
+- `src/build.py`: la paleta de cada tema (colores en OKLCH), los degradados y el ensamblado del JSON.
+- `src/build/`: CSS legible de cada tema, para revisar (no se versiona).
 
 Algunas reglas usan clases internas de T3 Code (la barra de contexto y los botones del composer). Están agrupadas en la sección **Hooks frágiles** de `template.css`. Si una actualización de T3 las cambia, esas partes vuelven a su aspecto normal sin romper el resto.
